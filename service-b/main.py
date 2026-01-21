@@ -1,32 +1,40 @@
-from fastapi import FastAPI, Body
-import uvicorn
+from fastapi import FastAPI, HTTPException
+import pandas as pd
+import numpy as np
 
 app = FastAPI(title="Service B - Data Cleaning & Normalization")
 
 @app.post("/clean")
+def clean(data: list[dict]):
 
-def clean(data = Body(...)):
-    return {"received_type": str(type(data)), "received": data}
+    
+    df = pd.DataFrame(data)
 
-    # clean_data = [data]
-    # # for loc in data:
-    # #     clean_data.append(loc.get("location_name"))
+    
+    required_cols = ["timestamp", "location_name", "temperature", "wind_speed"]
+    for col in required_cols:
+        if col not in df.columns:
+            raise HTTPException(status_code=400, detail=f"Missing field: {col}")
 
-    # return clean_data
+   
+    df["temperature_category"] = pd.cut(
+        x = df["temperature"],
+        bins=[-np.inf, 18, 25, np.inf],
+        labels=["cold", "moderate", "hot"]
+    )
 
+  
+    df["wind_status"] = pd.cut(
+    x=df["wind_speed"],
+    bins=[-np.inf, 10, np.inf],
+    labels=["calm", "windy"]
+)
 
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8002)
+    
 
+    res = {
+        "count": len(df),
+        "data": df.to_dict(orient="records")
+    }
 
-
-
-
-
-
-
-    # data יהיה כל ה-JSON שנשלח בגוף הבקשה (Body)
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8002)
-
+    return res
