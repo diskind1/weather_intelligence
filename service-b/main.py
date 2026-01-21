@@ -1,33 +1,17 @@
-from fastapi import FastAPI, HTTPException
-import pandas as pd
-import requests
+from fastapi import FastAPI
 import uvicorn
 
 app = FastAPI(title="Service B - Data Cleaning & Normalization")
 
-url = "http://0.0.0.0:8001/ingest"
-
-# SERVICE_C_URL = ("SERVICE_C_URL", "http://localhost:8003")
-
-
 @app.post("/clean")
-def clean():
 
+def clean(data):
 
+    clean_data = [data]
+    # for loc in data:
+    #     clean_data.append(loc.get("location_name"))
 
-
-
-    response = requests.get(url)
-    # response.raise_for_status()
-    data = response.json()
-
-    return data
-
-
-
-
-
-# df.to_dict(orient="records")
+    return clean_data
 
 
 if __name__ == "__main__":
