@@ -1,4 +1,5 @@
 import requests
+from datetime import datetime
 
 # --------- Helper: Geocoding ----------
 def fetch_coordinates(location_name: str):
@@ -62,7 +63,7 @@ def ingest_weather_for_location(location_name):
     # 3. Flatten to records (ONE record per hour per location)
     for i in range(len(times)):
         record = {
-            "timestamp": times[i],
+            "timestamp": datetime.fromisoformat(times[i]),
             "location_name": location["location_name"],
             "country": location["country"],
             "latitude": location["latitude"],
