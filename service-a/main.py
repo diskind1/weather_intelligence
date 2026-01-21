@@ -1,5 +1,5 @@
-from fastapi import FastAPI
 from api_extractor import ingest_weather_for_location
+from fastapi import FastAPI, HTTPException
 from fastapi.encoders import jsonable_encoder
 import requests
 
@@ -11,9 +11,14 @@ def read_external_data():
     json_data = jsonable_encoder(data)
 
     url = "http://127.0.0.1:8002/clean"
-    response = requests.post(url, json=json_data)
+    response = requests.post(url=url, json=json_data)
+
+    if response.status_code != 200:
+        raise HTTPException(status_code=500, detail=response.text)
+
+    return {"status:": response.status_code, "count": len(json_data), "data": json_data}
 
 
 
-    return response.json
+
 
