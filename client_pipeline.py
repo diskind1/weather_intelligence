@@ -2,16 +2,14 @@
 
 # a = requests.post("http://127.0.0.1:8001/ingest").json()
 
-# payload = a["data"]          # <<< זה מה ש-Service B מצפה לקבל
-# b = requests.post("http://127.0.0.1:8002/clean", json=payload).json()
+# b = requests.post("http://127.0.0.1:8002/clean", json=a).json()
 
-# print("Records after cleaning:", b["count"])
+# c = requests.post("http://127.0.0.1:8003/records", json=b["data"]).json()
 
-
+# print("Inserted into DB:", c["count"])
 
 
 import requests
 
-a = requests.post("http://127.0.0.1:8001/ingest").json()
-b = requests.post("http://127.0.0.1:8002/clean", json=a).json()
-print("Records after cleaning:", b["count"])
+r = requests.post("http://127.0.0.1:8001/ingest").json()
+print(r)

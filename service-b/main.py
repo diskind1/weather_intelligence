@@ -2,10 +2,10 @@ from fastapi import FastAPI, HTTPException
 import pandas as pd
 import numpy as np
 import requests
+import os
+SERVICE_C_URL = os.getenv("SERVICE_C_URL", "http://service-c:8000/records")
 
 app = FastAPI(title="Service B - Data Cleaning & Normalization")
-
-SERVICE_C_URL = "http://127.0.0.1:8003/records"
 
 @app.post("/clean")
 def clean(data: list[dict]):
