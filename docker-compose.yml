@@ -1,0 +1,41 @@
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: pass123
+      MYSQL_DATABASE: weather_db
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  service-c:
+    build: ./service-c
+    environment:
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASSWORD: pass123
+      DB_NAME: weather_db
+    depends_on:
+      - mysql
+    ports:
+      - "8003:8000"
+
+  service-b:
+    build: ./service-b
+    environment:
+      SERVICE_C_URL: http://service-c:8000/records
+    depends_on:
+      - service-c
+    ports:
+      - "8002:8000"
+
+  service-a:
+    build: ./service-a
+    environment:
+      SERVICE_B_URL: http://service-b:8000/clean
+    depends_on:
+      - service-b
+    ports:
+      - "8001:8000"
+
+volumes:
+  mysql_data:
